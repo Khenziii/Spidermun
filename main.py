@@ -1,3 +1,6 @@
+blocked = True
+reason = "Spidermun ciagle jest budowany, cierpliwosci :)"
+
 import discord
 from discord import app_commands
 from dotenv import load_dotenv
@@ -27,7 +30,23 @@ pernament_categories = [ # IMPORTANT!! After creating a new category, add it to 
 categories_to_add_list = [
     "1A", 
     "1B", 
-    "1C"
+    "1C",
+    "1D",
+    "1E",
+    "1F",
+    "1G",
+    "1H",
+    "1I",
+    "1E",
+    "2A", 
+    "2B", 
+    "2C",
+    "2D",
+    "2E",
+    "2F",
+    "2G",
+    "2H",
+    "2I",
 ]
 
 class TrustedError(Exception):
@@ -94,33 +113,45 @@ async def delete_category(category):
 
 @client.event
 async def on_ready():
-    await tree.sync(guild=discord.Object(id=1144935032083988490)) 
+    await tree.sync() 
     # it takes up to an hour for discord to add new commands without spefifying guilds 
     # id (i wont wait that long while developing) :/ You can get rid of it in production tho
     print(f"Spidermun running as: {client.user}")
 
 
-@tree.command(name="ping", description="pong!", guild=discord.Object(id=1144935032083988490))
+@tree.command(name="ping", description="pong!")
 async def ping(interaction):
     await interaction.response.send_message(":thumbsup:")
+
+    if(blocked == True and interaction.user.id != 714462696061403176):
+        await interaction.channel.send(f"Bot obecnie jest zablokowany. Przyczyna: {reason}")
+        return
 
     await log(f"{interaction.user.display_name} ran the ping command")
 
     await interaction.channel.send("pong :)")
 
 
-@tree.command(name="push_newyear", description="zmienia nazwy kanalow w ten sposob, aby pasowaly do nowych klas", guild=discord.Object(id=1144935032083988490))
+@tree.command(name="push_newyear", description="zmienia nazwy kanalow w ten sposob, aby pasowaly do nowych klas")
 async def ping(interaction):
     await interaction.response.send_message(":thumbsup:")
+
+    if(blocked == True and interaction.user.id != 714462696061403176):
+        await interaction.channel.send(f"Bot obecnie jest zablokowany. Przyczyna: {reason}")
+        return
 
     await log(f"{interaction.user.display_name} ran the push_newyear command")
 
     await interaction.channel.send("Ta komenda nie zostala jeszcze zaimplementowana. Aby przyspieszyc jej produkcje, skontaktuj sie z Khenzii'm :) https://khenzii.dev/")
 
 
-@tree.command(name="push", description="pushuje kategorie i channelsy w kategoriach, wiecej info -> /help", guild=discord.Object(id=1144935032083988490))
+@tree.command(name="push", description="pushuje kategorie i channelsy w kategoriach, wiecej info -> /help")
 async def push(interaction):
     await interaction.response.send_message(":thumbsup:")
+
+    if(blocked == True and interaction.user.id != 714462696061403176):
+        await interaction.channel.send(f"Bot obecnie jest zablokowany. Przyczyna: {reason}")
+        return
 
     await log(f"{interaction.user.display_name} ran the push command")
 
@@ -158,9 +189,13 @@ async def push(interaction):
     await interaction.channel.send("skonczylem robic things..")
         
 
-@tree.command(name="stash", description="stashuje kategorie i channelsy w kategoriach, wiecej info -> /help", guild=discord.Object(id=1144935032083988490))
+@tree.command(name="stash", description="stashuje kategorie i channelsy w kategoriach, wiecej info -> /help")
 async def push(interaction):
     await interaction.response.send_message(":thumbsup:")
+
+    if(blocked == True and interaction.user.id != 714462696061403176):
+        await interaction.channel.send(f"Bot obecnie jest zablokowany. Przyczyna: {reason}")
+        return
 
     await log(f"{interaction.user.display_name} ran the stash command \n")
 
@@ -187,16 +222,10 @@ async def push(interaction):
 
         current_channels_list = await get_channels_in_directory(interaction, category=category)
 
-        print(current_channels_list)
-        print(channels_list_text)
-        print(channels_list_audio)
-
         if(category.endswith("text") == True):
             if(category_object is not None):
                 for channel_in_category in current_channels_list:
                     if(channel_in_category not in channels_list_text):
-                        print(f"deleting {channel_in_category} because it is not in the {channels_list_text}")
-
                         channel = discord.utils.get(category_object.channels, name=channel_in_category)
                         await channel.delete()
                     
@@ -204,11 +233,9 @@ async def push(interaction):
             if(category_object is not None):
                 for channel_in_category in current_channels_list:
                     if(channel_in_category not in channels_list_audio):
-                        print(f"deleting {channel_in_category} because it is not in the {channels_list_text}")
-
                         channel = discord.utils.get(category_object.channels, name=channel_in_category)
                         await channel.delete()
-                        
+
 
     await interaction.channel.send("skonczylem robic things..")
             
