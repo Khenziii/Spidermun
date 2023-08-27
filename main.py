@@ -27,6 +27,7 @@ with open('./storage/data.json', 'r') as file:
     categories_to_add_list = data["categories_to_add_list"]
     
 
+
 class TrustedError(Exception):
     def __init__(self, message):
         self.message = message
@@ -89,10 +90,11 @@ async def delete_category(category):
     await category.delete()
 
 
+
 @client.event
 async def on_ready():
-    await tree.sync() # comment this line and uncomment the next one in production
-    # await tree.sync()
+    # await tree.sync(guild=discord.Object(id=1144632862314860675)) # comment this line and uncomment the next one in production
+    await tree.sync()
     await client.change_presence(activity=discord.Game(name="Uncle Ben Saving Simulator 2023"))
     print(f"Spidermun running as: {client.user}")
 
@@ -104,7 +106,7 @@ async def on_member_update(before, after):
     for role in before.roles:
         roles.append(role.name)
 
-    if(len(roles) == 1): # if the user didn't have any roles (had only one (the @everyone role)) before (is new to the server) - try to give him access to certain categories
+    if(len(roles) == 1): # if the user didn't have any roles before (had only one (the @everyone role (is new to the server))) try to give him access to certain categories
         school_years = ["1", "2", "3", "-1"]
         class_name = ["A", "B", "C", "D", "E", "F", "I"]
 
@@ -148,6 +150,25 @@ async def ping(interaction):
     await interaction.channel.send("pong :)")
 
 
+@tree.command(name="help", description="displays some info and stuff")
+@app_commands.describe(language="en/pl (default: pl)")
+async def help_command(interaction, language: str="pl"):
+    await interaction.response.send_message(":thumbsup:")
+
+    if(blocked == True and interaction.user.id != 714462696061403176):
+        await interaction.channel.send(f"Bot obecnie jest zablokowany. Przyczyna: {reason}")
+        return
+
+    await log(f"{interaction.user.display_name} ran the help command")
+
+    if(language == "pl"):
+        await interaction.channel.send("Liste komend i ich opisy znajdziesz w publicznym repo Spidermuna: https://github.com/Khenziii/Spidermun")
+    elif(language == "en"):
+        await interaction.channel.send("All of the commands are explained in Spidermun's public github repo: https://github.com/Khenziii/Spidermun")
+    else:
+        await interaction.channel.send("Liste komend i ich opisy znajdziesz w publicznym repo Spidermuna: https://github.com/Khenziii/Spidermun")
+
+
 @tree.command(name="push_newyear", description="zmienia nazwy kanalow w ten sposob, aby pasowaly do nowych klas")
 async def push_newyear(interaction):
     await interaction.response.send_message(":thumbsup:")
@@ -157,6 +178,7 @@ async def push_newyear(interaction):
         return
 
     await log(f"{interaction.user.display_name} ran the push_newyear command")
+    await only_for_staff(interaction)
 
     await interaction.channel.send("Ta komenda nie zostala jeszcze zaimplementowana. Aby przyspieszyc jej produkcje, skontaktuj sie z Khenzii'm :) https://khenzii.dev/")
 
@@ -170,7 +192,6 @@ async def push(interaction):
         return
 
     await log(f"{interaction.user.display_name} ran the push command")
-
     await only_for_staff(interaction)
 
     await interaction.channel.send("robie things..")
