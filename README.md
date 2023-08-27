@@ -38,6 +38,5 @@ After user anwsers the pre-join questions, the bot automatically greets him and 
 I honestly doubt that anyone would ever want to contribute to a project that some random guy wrote in a day (honestly, this is probably the worst public repo on this profile), but if you would like to do so, you can view the list of stuff to-do below :)
 
 ## TO-DO list:
-1. create a waiting animation (waiting for the bot to finish creating / deleting stuff can be annoying, i was thinking about sending "-" and then later editing it using this list every second: ["\", "|", "/", "-"]. I think that it would be a lot cooler than just sending the "doing stuff.." message)
-2. create the /amend command (the amend command will change the names of channels inside of categories based on the name inside of the 0's)
-3. implement the /push_newyear command (this command is explained in the commands section)
+1. create the /amend command (the amend command will change the names of channels inside of categories based on the name inside of the 0's)
+2. implement the /push_newyear command (this command is explained in the commands section)

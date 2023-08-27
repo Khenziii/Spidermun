@@ -2,11 +2,13 @@ blocked = False
 reason = "Spidermun ciagle jest budowany, cierpliwosci :)"
 
 import discord
+from discord.ext import tasks
 from discord import app_commands
 from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta, timezone
 import json
+import asyncio
 
 intents = discord.Intents.default()
 intents.members = True
@@ -194,7 +196,18 @@ async def push(interaction):
     await log(f"{interaction.user.display_name} ran the push command")
     await only_for_staff(interaction)
 
-    await interaction.channel.send("robie things..")
+
+    chars = ['\\', '|', '/', '-']
+    message = await interaction.channel.send(":)")
+
+    @tasks.loop(seconds=1)
+    async def waiting_animation():
+        for char in chars:
+            await asyncio.sleep(1)  # wait for 1 second
+            await message.edit(content=char)
+
+    waiting_animation.start()
+    
 
     categories_list = await get_categories(interaction)
     channels_to_add_list_text = await get_channels_in_directory(interaction, text_or_audio="text")
@@ -223,7 +236,10 @@ async def push(interaction):
                 if discord.utils.get(category_object.channels, name=channel) is None:
                     await interaction.guild.create_voice_channel(channel, category=category_object)
 
-    await interaction.channel.send("skonczylem robic things..")
+
+    waiting_animation.stop()
+    await asyncio.sleep(5)
+    await message.edit(content="done!")
         
 
 @tree.command(name="stash", description="stashuje kategorie i channelsy w kategoriach, wiecej info -> /help")
@@ -238,7 +254,18 @@ async def stash(interaction):
 
     await only_for_staff(interaction)
 
-    await interaction.channel.send("robie things..")
+
+    chars = ['\\', '|', '/', '-']
+    message = await interaction.channel.send(":)")
+
+    @tasks.loop(seconds=1)
+    async def waiting_animation():
+        for char in chars:
+            await asyncio.sleep(1)  # wait for 1 second
+            await message.edit(content=char)
+
+    waiting_animation.start()
+
 
     categories_list = await get_categories(interaction)
     channels_list_text = await get_channels_in_directory(interaction, text_or_audio="text")
@@ -274,7 +301,9 @@ async def stash(interaction):
                         await channel.delete()
 
 
-    await interaction.channel.send("skonczylem robic things..")
+    waiting_animation.stop()
+    await asyncio.sleep(5)
+    await message.edit(content="done!")
             
 
 @tree.command(name="show_trusted_ids", description="Pokazuje zaufane id. Wiecej info -> /help")
