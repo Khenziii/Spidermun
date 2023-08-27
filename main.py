@@ -1,4 +1,4 @@
-blocked = True
+blocked = False
 reason = "Spidermun ciagle jest budowany, cierpliwosci :)"
 
 import discord
@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 import json
 
 intents = discord.Intents.default()
+intents.members = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
@@ -90,10 +91,48 @@ async def delete_category(category):
 
 @client.event
 async def on_ready():
-    await tree.sync(guild=discord.Object(id=1144935032083988490)) # comment this line and uncomment the next one in production
+    await tree.sync() # comment this line and uncomment the next one in production
     # await tree.sync()
     await client.change_presence(activity=discord.Game(name="Uncle Ben Saving Simulator 2023"))
     print(f"Spidermun running as: {client.user}")
+
+
+@client.event
+async def on_member_update(before, after):
+    roles = []
+
+    for role in before.roles:
+        roles.append(role.name)
+
+    if(len(roles) == 1): # if the user didn't have any roles (had only one (the @everyone role)) before (is new to the server) - try to give him access to certain categories
+        school_years = ["1", "2", "3", "-1"]
+        class_name = ["A", "B", "C", "D", "E", "F", "I"]
+
+        right_class = ""
+
+        for role in after.roles:
+            if(role.name in school_years or role.name in class_name):
+                right_class += role.name
+
+        for classes in class_name:
+            if(right_class.startswith(classes)):
+                right_class = right_class[::-1]
+                break
+
+        rules_channel = after.guild.get_channel(1144633291538976779)
+        khenzii = await after.guild.fetch_member(714462696061403176)
+
+        try:
+            category = discord.utils.get(after.guild.categories, name=f"{right_class}-text")
+            await category.set_permissions(after, read_messages=True)
+
+            category = discord.utils.get(after.guild.categories, name=f"{right_class}-audio")
+            await category.set_permissions(after, read_messages=True)
+
+            await after.guild.system_channel.send(f"Witaj, {after.mention}! Zostaly ci przyznane permisje pozwalajace wyswietlac kategorie: {right_class}-TEXT i {right_class}-AUDIO. Jesli chcesz, mozesz zapoznac sie z regulaminem na {rules_channel.mention}. Jesli uwazasz ze przyznalem ci zle permisje, skontaktuj sie z {khenzii.mention}. Milej zabawy :)")
+        except:
+            await after.guild.system_channel.send(f"Witaj, {after.mention}! Jesli chcesz, mozesz zapoznac sie z regulaminem na {rules_channel.mention}. Milej zabawy :)")
+
 
 
 @tree.command(name="ping", description="pong!")
@@ -231,7 +270,7 @@ async def show_trusted_ids(interaction):
     await interaction.channel.send(trusted_user_ids)
 
 
-@tree.command(name="set_trusted_ids", description="Zmienia zaufane id. Wiecej info -> /help", guild=discord.Object(id=1144935032083988490))
+@tree.command(name="set_trusted_ids", description="Zmienia zaufane id. Wiecej info -> /help")
 @app_commands.describe(ids="Slownik nowych id.")
 async def set_trusted_ids(interaction, ids: str):
     await interaction.response.send_message(":thumbsup:")
@@ -267,7 +306,7 @@ async def set_trusted_ids(interaction, ids: str):
     await interaction.channel.send(f"{old_ids} --> {data['trusted_user_ids']}")
 
 
-@tree.command(name="show_permanent_categories", description="Pokazuje permanentne kategorie. Wiecej info -> /help", guild=discord.Object(id=1144935032083988490))
+@tree.command(name="show_permanent_categories", description="Pokazuje permanentne kategorie. Wiecej info -> /help")
 async def show_permanent_categories(interaction):
     await interaction.response.send_message(":thumbsup:")
 
@@ -281,7 +320,7 @@ async def show_permanent_categories(interaction):
     await interaction.channel.send(permanent_categories)
 
 
-@tree.command(name="set_permanent_categories", description="Zmienia permanentne kategorie. Wiecej info -> /help", guild=discord.Object(id=1144935032083988490))
+@tree.command(name="set_permanent_categories", description="Zmienia permanentne kategorie. Wiecej info -> /help")
 @app_commands.describe(kategorie="Lista nowych kategorii")
 async def set_permanent_categories(interaction, kategorie: str):
     await interaction.response.send_message(":thumbsup:")
@@ -311,7 +350,7 @@ async def set_permanent_categories(interaction, kategorie: str):
     await interaction.channel.send(f"{old_categories} --> {data['permanent_categories']}")
 
 
-@tree.command(name="show_klasy", description="Pokazuje klasy. Wiecej info -> /help", guild=discord.Object(id=1144935032083988490))
+@tree.command(name="show_klasy", description="Pokazuje klasy. Wiecej info -> /help")
 async def show_klasy(interaction):
     await interaction.response.send_message(":thumbsup:")
 
@@ -325,7 +364,7 @@ async def show_klasy(interaction):
     await interaction.channel.send(categories_to_add_list)
 
 
-@tree.command(name="set_klasy", description="Zmienia klasy. Wiecej info -> /help", guild=discord.Object(id=1144935032083988490))
+@tree.command(name="set_klasy", description="Zmienia klasy. Wiecej info -> /help")
 @app_commands.describe(klasy="Lista nowych klas")
 async def set_permanent_categories(interaction, klasy: str):
     await interaction.response.send_message(":thumbsup:")
