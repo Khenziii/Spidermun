@@ -110,7 +110,7 @@ async def on_member_update(before, after):
 
     if(len(roles) == 1): # if the user didn't have any roles before (had only one (the @everyone role (is new to the server))) try to give him access to certain categories
         school_years = ["1", "2", "3", "-1"]
-        class_name = ["A", "B", "C", "D", "E", "F", "I"]
+        class_name = ["A", "B", "C", "D", "E", "F", "G", "H", "I"]
 
         right_class = ""
 
@@ -134,7 +134,9 @@ async def on_member_update(before, after):
             await category.set_permissions(after, read_messages=True)
 
             await after.guild.system_channel.send(f"Witaj, {after.mention}! Zostaly ci przyznane permisje pozwalajace wyswietlac kategorie: {right_class}-TEXT i {right_class}-AUDIO. Jesli chcesz, mozesz zapoznac sie z regulaminem na {rules_channel.mention}. Jesli uwazasz ze przyznalem ci zle permisje, skontaktuj sie z {khenzii.mention}. Milej zabawy :)")
-        except:
+        except Exception as e:
+            # print for debug uses (if the user won't get the permissions even tho he should, you will be able to check the logs later)
+            print(f"most of the time, you should ignore this print (the user prolly just choose the 'Guest' option so we didn't grant him any permissions, however if he should have gotten some permissions, you can check what went wrong here) exception: {e}, category name (tried to add permissions to that thing (with '-TEXT' and '-AUDIO' at the end)): {right_class}, user: '{after.display_name}'")
             await after.guild.system_channel.send(f"Witaj, {after.mention}! Jesli chcesz, mozesz zapoznac sie z regulaminem na {rules_channel.mention}. Milej zabawy :)")
 
 
