@@ -9,6 +9,7 @@ import os
 from datetime import datetime, timedelta, timezone
 import json
 import asyncio
+import random
 
 intents = discord.Intents.default()
 intents.members = True
@@ -139,6 +140,25 @@ async def on_member_update(before, after):
             print(f"most of the time, you should ignore this print (the user prolly just choose the 'Guest' option so we didn't grant him any permissions, however if he should have gotten some permissions, you can check what went wrong here) exception: {e}, category name (tried to add permissions to that thing (with '-TEXT' and '-AUDIO' at the end)): {right_class}, user: '{after.display_name}'")
             await after.guild.system_channel.send(f"Witaj, {after.mention}! Jesli chcesz, mozesz zapoznac sie z regulaminem na {rules_channel.mention}. Milej zabawy :)")
 
+@client.event
+async def on_member_remove(member):
+    khenzii = await member.guild.fetch_member(714462696061403176)
+
+    goodbyes = [f"Dzis, ", f"{member.mention} postanowil nas opusisc - Dowidzenia :/", f"Zegnaj, {member.mention} :<"]
+    random_number = random.randint(0, len(goodbyes)-1)
+
+    if(random_number == 0):
+        gmt_plus_2 = timezone(timedelta(hours=2))
+        current_datetime = datetime.now(gmt_plus_2)
+        current_datetime_formated = current_datetime.strftime(f"%d/%m/%Y")
+        
+        random_message = goodbyes[0]
+        random_message += f"{current_datetime_formated}, opuscil nas {member.mention}. Zegnaj!"
+    else:
+        random_message = goodbyes[random_number]
+    
+
+    await member.guild.system_channel.send(f"{random_message}\n\n{khenzii.mention}")
 
 
 @tree.command(name="ping", description="pong!")
