@@ -144,7 +144,7 @@ async def on_member_update(before, after):
 async def on_member_remove(member):
     khenzii = await member.guild.fetch_member(714462696061403176)
 
-    goodbyes = [f"Dzis, ", f"{member.mention} postanowil nas opusisc - Dowidzenia :/", f"Zegnaj, {member.mention} :<"]
+    goodbyes = [f"Dzis, ", f"{member.mention} postanowil nas opuscic - Dowidzenia :/", f"Zegnaj, {member.mention} :<"]
     random_number = random.randint(0, len(goodbyes)-1)
 
     if(random_number == 0):
