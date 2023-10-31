@@ -7,6 +7,7 @@ from discord import app_commands
 from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta, timezone
+import pytz
 import json
 import asyncio
 import random
@@ -74,15 +75,18 @@ async def get_channels_in_directory(interaction, text_or_audio: str = "", catego
 
 
 async def log(message: str):
-    # Create a timezone for GMT+2 (GMT+2 - Warsaw)
-    gmt_plus_2 = timezone(timedelta(hours=2))
-    current_datetime = datetime.now(gmt_plus_2)
+    # create a timezone for Warsaw
+    warsaw_timezone = pytz.timezone('Europe/Warsaw')
 
-    log_record = current_datetime.strftime(f"%d/%m/%y - %H:%M:%S > {message}")
+    # get the current time in Warsaw
+    warsaw_time = datetime.now(warsaw_timezone)
+
+    log_record = warsaw_time.strftime(f"%d/%m/%Y - %H:%M:%S > {message}")
     print(log_record)
 
     with open("./storage/logs.dat", 'a') as f:
-          f.write(f"{log_record} \n")
+        f.write(f"{log_record} \n")
+
 
 async def delete_category(category):
     channels = category.channels
@@ -91,7 +95,6 @@ async def delete_category(category):
         await channel.delete()
     
     await category.delete()
-
 
 
 @client.event
